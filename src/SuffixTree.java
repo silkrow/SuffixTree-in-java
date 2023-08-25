@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 
-/* UkkSuffixTree is constructed from a string s.
- * An array of nodes is stored in the UkkSuffixTree class, node[0] is the root of the suffix tree.
+/* SuffixTree is constructed from a string s.
+ * An array of nodes is stored in the SuffixTree class, node[0] is the root of the suffix tree.
  * build_tree() is the function to construct the suffix tree. 
  */
 class SuffixTree {
@@ -59,7 +59,7 @@ class SuffixTree {
     
     static State ptr;
 
-    UkkSuffixTree (String s) {
+    SuffixTree (String s) {
         this.s = s;
         this.n = s.length();
         t[0] = new Node(); // Initialize the root node
@@ -165,4 +165,5 @@ class SuffixTree {
             System.out.println(t[i].l + " " + t[i].r + " " + t[i].par + " " + t[i].link);
         }
     }
+
 }
