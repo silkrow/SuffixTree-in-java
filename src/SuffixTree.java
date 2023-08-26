@@ -1,6 +1,5 @@
-/* Suffix Tree implementation based on Ukkonen's Algorithm
- */
-//package edu.illinois.iti.orc;
+// Suffix Tree implementation based on Ukkonen's Algorithm
+
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
