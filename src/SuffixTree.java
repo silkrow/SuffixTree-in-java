@@ -72,6 +72,7 @@ class SuffixTree {
     static State go(State st, int l, int r, String s) {
         while (l < r) {
             if (st.pos == t[st.v].len()) {
+		    System.out.println("st.pos == t[st.v].len()");
                 st = new State(t[st.v].get(s.charAt(l)), 0);
                 if (st.v == -1)
                     return st;
