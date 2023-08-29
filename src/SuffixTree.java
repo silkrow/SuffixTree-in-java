@@ -129,10 +129,10 @@ class SuffixTree {
         }
     }
 
-    static void buildTree(String s, int n) {
+    static void buildTree(String str, int n) {
         sz = 1;
         for (int i = 0; i < n; ++i)
-            treeExtend(i, s);
+            treeExtend(i, str);
     }
 
     public int[] match(String pattern) {
