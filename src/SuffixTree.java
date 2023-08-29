@@ -142,23 +142,26 @@ class SuffixTree {
 
         for (int i = 0; i < pattern.length(); i++) {
             currentState = go(currentState, currentState.pos, currentState.pos + 1, pattern);
+
+            System.out.println("After "+i+"th for loop, currentState is now "+currentState.v + " " + currentState.pos);
+
             if (currentState.v == -1) {
                 return new int[0]; // No matches found, return an empty array
             }
-            if (currentState.pos == t[currentState.v].len()) {
-                matches.add(i - t[currentState.v].len() + 1);
-            }
+            // if (currentState.pos == t[currentState.v].len()) {
+            //     matches.add(i - t[currentState.v].len() + 1);
+            // }
         }
 
         System.out.println("Here we claim that a match has been found");
 
-        int[] result = new int[matches.size()];
-        for (int i = 0; i < matches.size(); i++) {
-            result[i] = matches.get(i);
-        }
-        return result;
+        // int[] result = new int[matches.size()];
+        // for (int i = 0; i < matches.size(); i++) {
+        //     result[i] = matches.get(i);
+        // }
+        // return result;
 
-        //return new int[0];
+        return new int[0];
     }
 
     static void printTree() {
