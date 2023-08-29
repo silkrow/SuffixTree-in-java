@@ -48,8 +48,8 @@ class SuffixTree {
     static int sz;
 
     static class State {
-        int v, pos;
-
+        int v, pos; // v - index of the current node being processed during tree traversal
+                    // pos - the position within that node's substring where the traversal is
         State(int v, int pos) {
             this.v = v;
             this.pos = pos;
@@ -62,21 +62,19 @@ class SuffixTree {
         this.s = s;
         this.n = s.length();
         t[0] = new Node(); // Initialize the root node
-        // for (int i = 1; i < MAXN; ++i)
-        //     t[i] = new Node(); // Initialize other nodes
         ptr = new State(0, 0); // Initialize ptr within the constructor
         buildTree(s, n);
     }
 
 
-    static State go(State st, int l, int r, String s) {
+    static State go(State st, int l, int r, String str) {
         while (l < r) {
             if (st.pos == t[st.v].len()) {
-                st = new State(t[st.v].get(s.charAt(l)), 0);
+                st = new State(t[st.v].get(str.charAt(l)), 0);
                 if (st.v == -1)
                     return st;
             } else {
-                if (s.charAt(t[st.v].l + st.pos) != s.charAt(l))
+                if (s.charAt(t[st.v].l + st.pos) != str.charAt(l))
                     return new State(-1, -1);
                 if (r - l < t[st.v].len() - st.pos)
                     return new State(st.v, st.pos + r - l);
@@ -105,7 +103,7 @@ class SuffixTree {
     static int getLink(int v) {
         if (t[v].link != -1)
             return t[v].link;
-        if (t[v].par == -1)
+        if (t[v].par == -1) // special case for root node
             return 0;
         int to = getLink(t[v].par);
         return t[v].link = split(go(new State(to, t[to].len()), t[v].l + (t[v].par == 0? 1 : 0), t[v].r, s));
@@ -121,8 +119,8 @@ class SuffixTree {
 
             int mid = split(ptr);
             int leaf = sz++;
-            t[leaf] = new Node(pos, n, mid);
-            t[mid].next.put(s.charAt(pos), leaf);
+            t[leaf] = new Node(pos, n, mid); // new node, r = n
+            t[mid].next.put(s.charAt(pos), leaf); // add the child to parent's next 
 
             ptr.v = getLink(mid);
             ptr.pos = t[ptr.v].len();
@@ -152,11 +150,15 @@ class SuffixTree {
             }
         }
 
+        System.out.println("Here we claim that a match has been found");
+
         int[] result = new int[matches.size()];
         for (int i = 0; i < matches.size(); i++) {
             result[i] = matches.get(i);
         }
         return result;
+
+        //return new int[0];
     }
 
     static void printTree() {
