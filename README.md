@@ -14,6 +14,18 @@ Clean with
 
 	make clean
 
+Input text and pattern, to see if this pattern exists as a substring in the text. Example:
+
+	$ make run
+	java -cp bin Main
+	Enter the input string: banana
+	Enter the pattern: na
+	Pattern found at indices:
+	4
+	2
+
+Note that you DO NOT need to enter the termination character ```$``` for the text you input. This termination character is defined in the SuffxTree class as a constant called ```TER```, feel free to change it to something else if you want to use ```$``` in your text.
+
 ## What Does it Do?
 A suffix tree stores all the suffix of a string ```S``` on its nodes. Here is an example of the suffix tree for ```S = banana$```
 
