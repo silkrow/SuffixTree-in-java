@@ -135,33 +135,61 @@ class SuffixTree {
             treeExtend(i, str);
     }
 
+    // public int[] match(String pattern) {
+    //     List<Integer> matches = new ArrayList<>();
+
+    //     State currentState = new State(0, 0);
+
+    //     for (int i = 0; i < pattern.length(); i++) {
+    //         currentState = go(currentState, currentState.pos, currentState.pos + 1, pattern);
+
+    //         System.out.println("After "+i+"th for loop, currentState is now "+currentState.v + " " + currentState.pos);
+
+    //         if (currentState.v == -1) {
+    //             return new int[0]; // No matches found, return an empty array
+    //         }
+    //         if (currentState.pos == t[currentState.v].len()) {
+    //             matches.add(i - t[currentState.v].len() + 1);
+    //         }
+    //     }
+
+    //     System.out.println("Here we claim that a match has been found");
+
+    //     int[] result = new int[matches.size()];
+    //     for (int i = 0; i < matches.size(); i++) {
+    //         result[i] = matches.get(i);
+    //     }
+    //     return result;
+
+    // }
+
+
     public int[] match(String pattern) {
-        List<Integer> matches = new ArrayList<>();
+        State sptr = new State(0, 0);
+        int i = 0;
 
-        State currentState = new State(0, 0);
-
-        for (int i = 0; i < pattern.length(); i++) {
-            currentState = go(currentState, currentState.pos, currentState.pos + 1, pattern);
-
-            System.out.println("After "+i+"th for loop, currentState is now "+currentState.v + " " + currentState.pos);
-
-            if (currentState.v == -1) {
-                return new int[0]; // No matches found, return an empty array
+        while (i < pattern.length()) {
+            if (!t[sptr.v].next.containsKey(pattern.charAt(i))) {
+                System.out.println("Exit 1");
+                return new int[0];
             }
-            // if (currentState.pos == t[currentState.v].len()) {
-            //     matches.add(i - t[currentState.v].len() + 1);
-            // }
+
+            sptr.v = t[sptr.v].next.get(pattern.charAt(i)); // Goto next node
+
+            int len = t[sptr.v].len()>(pattern.length() - i)?(pattern.length() - i):t[sptr.v].len();
+
+            for (int j = 0; j < len; j++) {
+                if (s.charAt(j + t[sptr.v].l) != pattern.charAt(j)){
+                    System.out.println("Exit 2");
+                    return new int[0];
+                }
+                i++;
+            }
         }
 
-        System.out.println("Here we claim that a match has been found");
-
-        // int[] result = new int[matches.size()];
-        // for (int i = 0; i < matches.size(); i++) {
-        //     result[i] = matches.get(i);
-        // }
-        // return result;
-
-        return new int[0];
+        int[] result = new int[1];
+        result[0] = sptr.v;
+        return result;
     }
 
     static void printTree() {
