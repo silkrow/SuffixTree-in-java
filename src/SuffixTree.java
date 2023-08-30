@@ -3,6 +3,9 @@
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.LinkedList;
+import java.util.Map;
 
 /* SuffixTree is constructed from a string s.
  * An array of nodes is stored in the SuffixTree class, node[0] is the root of the suffix tree.
@@ -18,9 +21,10 @@ class SuffixTree {
      * par - the index of the parent node in the node array
      * link - the suffix link (pointing to the index of a node)
      * next - the list of edges going out from this node
+     * p_len - the path length (in character) from root to this node
     */
     static class Node {
-        int l, r, par, link;
+        int l, r, par, link, p_len;
         HashMap<Character, Integer> next;
 
         Node() {
@@ -33,6 +37,7 @@ class SuffixTree {
             this.par = par;
             this.link = -1;
             this.next = new HashMap<>();
+            this.p_len = 0;
         }
 
         int len() {
@@ -97,6 +102,9 @@ class SuffixTree {
         t[id].next.put(s.charAt(v.l + st.pos), st.v);
         t[st.v].par = id;
         t[st.v].l += st.pos;
+
+        t[id].p_len = t[t[id].par].p_len + t[id].len();
+        t[st.v].p_len = t[t[st.v].par].p_len + t[st.v].len();
         return id;
     }
 
@@ -121,6 +129,7 @@ class SuffixTree {
             int leaf = sz++;
             t[leaf] = new Node(pos, n, mid); // new node, r = n
             t[mid].next.put(s.charAt(pos), leaf); // add the child to parent's next 
+            t[leaf].p_len = t[mid].p_len + t[leaf].len(); // update path length
 
             ptr.v = getLink(mid);
             ptr.pos = t[ptr.v].len();
@@ -136,40 +145,55 @@ class SuffixTree {
     }
 
     public int[] match(String pattern) {
-        State sptr = new State(0, 0);
+        int sptr = 0;
         int i = 0;
+        List<Integer> matches = new ArrayList<>();
 
         while (i < pattern.length()) {
-            if (!t[sptr.v].next.containsKey(pattern.charAt(i))) {
+            if (!t[sptr].next.containsKey(pattern.charAt(i))) {
                 return new int[0];
             }
 
-            sptr.v = t[sptr.v].next.get(pattern.charAt(i)); // Goto next node
+            sptr = t[sptr].next.get(pattern.charAt(i)); // Goto next node
 
-            int len = t[sptr.v].len()>(pattern.length() - i)?(pattern.length() - i):t[sptr.v].len();
+            int len = t[sptr].len()>(pattern.length() - i)?(pattern.length() - i):t[sptr].len();
 
             for (int j = 0; j < len; j++) {
-                sptr.pos = j;
-                if (s.charAt(j + t[sptr.v].l) != pattern.charAt(i)){
+                // sptr.pos = j;
+                if (s.charAt(j + t[sptr].l) != pattern.charAt(i)){
                     return new int[0];
                 }
                 i++;
             }
         }
 
-        int count = pattern.length() - sptr.pos + t[sptr.v].len() - 1; // Num of characters on the path
+        // BFS starting from node t[sptr] to find all the leaves.
+        Queue<Integer> bfs = new LinkedList<>();
+        bfs.offer(sptr);
 
-        // BFS starting from node t[sptr.v] to find all the leaves.
+        while (bfs.size() > 0) {
+            sptr = bfs.poll();
+            if (t[sptr].next.size() == 0) {
+                matches.add(s.length() - t[sptr].p_len); // Calculate the real index by substraction
+            } else {
+                for (Map.Entry<Character, Integer> entry : t[sptr].next.entrySet()) {
+                    int child = entry.getValue();
+                    bfs.offer(child);
+                }
+            }
+        }
 
-        int[] result = new int[2];
-        result[0] = sptr.v;
-        result[1] = sptr.pos;
+        int[] result = new int[matches.size()];
+        for (int k = 0; k < matches.size(); k++) {
+            result[k] = matches.get(k);
+        }
         return result;
+
     }
 
     static void printTree() {
         for (int i = 0; i < sz; i++) {
-            System.out.println("Node" + i + " " + t[i].l + " " + t[i].r + " " + t[i].par + " " + t[i].link);
+            System.out.println("Node " + i + " " + t[i].l + " " + t[i].r + " " + t[i].par + " " + t[i].link + " " + t[i].p_len);
         }
     }
 
