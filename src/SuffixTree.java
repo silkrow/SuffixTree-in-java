@@ -135,42 +135,12 @@ class SuffixTree {
             treeExtend(i, str);
     }
 
-    // public int[] match(String pattern) {
-    //     List<Integer> matches = new ArrayList<>();
-
-    //     State currentState = new State(0, 0);
-
-    //     for (int i = 0; i < pattern.length(); i++) {
-    //         currentState = go(currentState, currentState.pos, currentState.pos + 1, pattern);
-
-    //         System.out.println("After "+i+"th for loop, currentState is now "+currentState.v + " " + currentState.pos);
-
-    //         if (currentState.v == -1) {
-    //             return new int[0]; // No matches found, return an empty array
-    //         }
-    //         if (currentState.pos == t[currentState.v].len()) {
-    //             matches.add(i - t[currentState.v].len() + 1);
-    //         }
-    //     }
-
-    //     System.out.println("Here we claim that a match has been found");
-
-    //     int[] result = new int[matches.size()];
-    //     for (int i = 0; i < matches.size(); i++) {
-    //         result[i] = matches.get(i);
-    //     }
-    //     return result;
-
-    // }
-
-
     public int[] match(String pattern) {
         State sptr = new State(0, 0);
         int i = 0;
 
         while (i < pattern.length()) {
             if (!t[sptr.v].next.containsKey(pattern.charAt(i))) {
-                System.out.println("Exit 1");
                 return new int[0];
             }
 
@@ -179,22 +149,27 @@ class SuffixTree {
             int len = t[sptr.v].len()>(pattern.length() - i)?(pattern.length() - i):t[sptr.v].len();
 
             for (int j = 0; j < len; j++) {
-                if (s.charAt(j + t[sptr.v].l) != pattern.charAt(j)){
-                    System.out.println("Exit 2");
+                sptr.pos = j;
+                if (s.charAt(j + t[sptr.v].l) != pattern.charAt(i)){
                     return new int[0];
                 }
                 i++;
             }
         }
 
-        int[] result = new int[1];
+        int count = pattern.length() - sptr.pos + t[sptr.v].len() - 1; // Num of characters on the path
+
+        // BFS starting from node t[sptr.v] to find all the leaves.
+
+        int[] result = new int[2];
         result[0] = sptr.v;
+        result[1] = sptr.pos;
         return result;
     }
 
     static void printTree() {
         for (int i = 0; i < sz; i++) {
-            System.out.println(t[i].l + " " + t[i].r + " " + t[i].par + " " + t[i].link);
+            System.out.println("Node" + i + " " + t[i].l + " " + t[i].r + " " + t[i].par + " " + t[i].link);
         }
     }
 
