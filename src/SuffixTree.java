@@ -49,7 +49,7 @@ class SuffixTree {
         }
     }
 
-    static Node[] t = new Node[MAXN];
+    static Node[] node = new Node[MAXN];
     static int sz;
 
     static class State {
@@ -66,7 +66,7 @@ class SuffixTree {
     SuffixTree (String s) {
         this.s = s;
         this.n = s.length();
-        t[0] = new Node(); // Initialize the root node
+        node[0] = new Node(); // Initialize the root node
         ptr = new State(0, 0); // Initialize ptr within the constructor
         buildTree(s, n);
     }
@@ -74,47 +74,47 @@ class SuffixTree {
 
     static State go(State st, int l, int r, String str) {
         while (l < r) {
-            if (st.pos == t[st.v].len()) {
-                st = new State(t[st.v].get(str.charAt(l)), 0);
+            if (st.pos == node[st.v].len()) {
+                st = new State(node[st.v].get(str.charAt(l)), 0);
                 if (st.v == -1)
                     return st;
             } else {
-                if (s.charAt(t[st.v].l + st.pos) != str.charAt(l))
+                if (s.charAt(node[st.v].l + st.pos) != str.charAt(l))
                     return new State(-1, -1);
-                if (r - l < t[st.v].len() - st.pos)
+                if (r - l < node[st.v].len() - st.pos)
                     return new State(st.v, st.pos + r - l);
-                l += t[st.v].len() - st.pos;
-                st.pos = t[st.v].len();
+                l += node[st.v].len() - st.pos;
+                st.pos = node[st.v].len();
             }
         }
         return st;
     }
 
     static int split(State st) {
-        if (st.pos == t[st.v].len())
+        if (st.pos == node[st.v].len())
             return st.v;
         if (st.pos == 0)
-            return t[st.v].par;
-        Node v = t[st.v];
+            return node[st.v].par;
+        Node v = node[st.v];
         int id = sz++;
-        t[id] = new Node(v.l, v.l + st.pos, v.par);
-        t[v.par].next.put(s.charAt(v.l), id);
-        t[id].next.put(s.charAt(v.l + st.pos), st.v);
-        t[st.v].par = id;
-        t[st.v].l += st.pos;
+        node[id] = new Node(v.l, v.l + st.pos, v.par);
+        node[v.par].next.put(s.charAt(v.l), id);
+        node[id].next.put(s.charAt(v.l + st.pos), st.v);
+        node[st.v].par = id;
+        node[st.v].l += st.pos;
 
-        t[id].p_len = t[t[id].par].p_len + t[id].len();
-        t[st.v].p_len = t[t[st.v].par].p_len + t[st.v].len();
+        node[id].p_len = node[node[id].par].p_len + node[id].len();
+        node[st.v].p_len = node[node[st.v].par].p_len + node[st.v].len();
         return id;
     }
 
     static int getLink(int v) {
-        if (t[v].link != -1)
-            return t[v].link;
-        if (t[v].par == -1) // special case for root node
+        if (node[v].link != -1)
+            return node[v].link;
+        if (node[v].par == -1) // special case for root node
             return 0;
-        int to = getLink(t[v].par);
-        return t[v].link = split(go(new State(to, t[to].len()), t[v].l + (t[v].par == 0? 1 : 0), t[v].r, s));
+        int to = getLink(node[v].par);
+        return node[v].link = split(go(new State(to, node[to].len()), node[v].l + (node[v].par == 0? 1 : 0), node[v].r, s));
     }
 
     static void treeExtend(int pos, String s) {
@@ -127,12 +127,12 @@ class SuffixTree {
 
             int mid = split(ptr);
             int leaf = sz++;
-            t[leaf] = new Node(pos, n, mid); // new node, r = n
-            t[mid].next.put(s.charAt(pos), leaf); // add the child to parent's next 
-            t[leaf].p_len = t[mid].p_len + t[leaf].len(); // update path length
+            node[leaf] = new Node(pos, n, mid); // new node, r = n
+            node[mid].next.put(s.charAt(pos), leaf); // add the child to parent's next 
+            node[leaf].p_len = node[mid].p_len + node[leaf].len(); // update path length
 
             ptr.v = getLink(mid);
-            ptr.pos = t[ptr.v].len();
+            ptr.pos = node[ptr.v].len();
             if (mid == 0)
                 break;
         }
@@ -150,33 +150,33 @@ class SuffixTree {
         List<Integer> matches = new ArrayList<>();
 
         while (i < pattern.length()) {
-            if (!t[sptr].next.containsKey(pattern.charAt(i))) {
+            if (!node[sptr].next.containsKey(pattern.charAt(i))) {
                 return new int[0];
             }
 
-            sptr = t[sptr].next.get(pattern.charAt(i)); // Goto next node
+            sptr = node[sptr].next.get(pattern.charAt(i)); // Goto next node
 
-            int len = t[sptr].len()>(pattern.length() - i)?(pattern.length() - i):t[sptr].len();
+            int len = node[sptr].len()>(pattern.length() - i)?(pattern.length() - i):node[sptr].len();
 
             for (int j = 0; j < len; j++) {
                 // sptr.pos = j;
-                if (s.charAt(j + t[sptr].l) != pattern.charAt(i)){
+                if (s.charAt(j + node[sptr].l) != pattern.charAt(i)){
                     return new int[0];
                 }
                 i++;
             }
         }
 
-        // BFS starting from node t[sptr] to find all the leaves.
+        // BFS starting from node node[sptr] to find all the leaves.
         Queue<Integer> bfs = new LinkedList<>();
         bfs.offer(sptr);
 
         while (bfs.size() > 0) {
             sptr = bfs.poll();
-            if (t[sptr].next.size() == 0) {
-                matches.add(s.length() - t[sptr].p_len); // Calculate the real index by substraction
+            if (node[sptr].next.size() == 0) {
+                matches.add(s.length() - node[sptr].p_len); // Calculate the real index by substraction
             } else {
-                for (Map.Entry<Character, Integer> entry : t[sptr].next.entrySet()) {
+                for (Map.Entry<Character, Integer> entry : node[sptr].next.entrySet()) {
                     int child = entry.getValue();
                     bfs.offer(child);
                 }
@@ -193,7 +193,7 @@ class SuffixTree {
 
     static void printTree() {
         for (int i = 0; i < sz; i++) {
-            System.out.println("Node " + i + " " + t[i].l + " " + t[i].r + " " + t[i].par + " " + t[i].link + " " + t[i].p_len);
+            System.out.println("Node " + i + " " + node[i].l + " " + node[i].r + " " + node[i].par + " " + node[i].link + " " + node[i].p_len);
         }
     }
 
