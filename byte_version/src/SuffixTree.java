@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -53,6 +54,8 @@ class SuffixTree {
 
     SuffixTree(byte[] byteArray) { // Change String to byte[]
         this.s = byteArray;
+		this.s = Arrays.copyOf(byteArray, byteArray.length + 1);
+		this.s[this.s.length - 1] = TER;
         this.n = this.s.length;
         node[0] = new Node();
         ptr = new State(0, 0);
