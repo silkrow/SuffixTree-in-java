@@ -15,6 +15,7 @@ class SuffixTree {
     static final int MAXN = 100000; // Maximum number of nodes
     static String s;
     static int n;
+	static final char TER = '$';
 
     /* Each node stores the information about the edge between it and its parent.
      * (l, r) - left and right boundaries of the substring [l, r - 1]
@@ -63,12 +64,12 @@ class SuffixTree {
     
     static State ptr;
 
-    SuffixTree (String s) {
-        this.s = s;
-        this.n = s.length();
+    SuffixTree (String str) {
+        this.s = str + TER;
+        this.n = this.s.length();
         node[0] = new Node(); // Initialize the root node
         ptr = new State(0, 0); // Initialize ptr within the constructor
-        buildTree(s, n);
+        buildTree(this.s, n);
     }
 
 
@@ -191,7 +192,7 @@ class SuffixTree {
 
     }
 
-    static void printTree() {
+    static void printTree() { // For debugging purpose
         for (int i = 0; i < sz; i++) {
             System.out.println("Node " + i + " " + node[i].l + " " + node[i].r + " " + node[i].par + " " + node[i].link + " " + node[i].p_len);
         }
