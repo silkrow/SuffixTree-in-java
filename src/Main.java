@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -15,8 +17,8 @@ public class Main {
         SuffixTree suffixTree = new SuffixTree(inputString);
 
         // Find matches for the pattern
-        int[] matches = suffixTree.match(pattern);
-        if (matches.length == 0) {
+		List<Integer> matches = suffixTree.match(pattern);
+        if (matches.size() == 0) {
             System.out.println("No matches found.");
         } else {
             System.out.println("Pattern found at indices:");

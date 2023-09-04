@@ -8,13 +8,13 @@ import java.util.Map;
 
 class SuffixTree {
     static final int MAXN = 100000;
-    static byte[] s; // Change String to byte[]
+    static byte[] s; 
     static int n;
-    static final byte TER = '$'; // Change char to byte
+    static final byte TER = '$'; 
 
     static class Node {
         int l, r, par, link, p_len;
-        HashMap<Byte, Integer> next; // Change HashMap<Character, Integer> to HashMap<Byte, Integer>
+        HashMap<Byte, Integer> next;
 
         Node() {
             this(0, 0, -1);
@@ -33,7 +33,7 @@ class SuffixTree {
             return r - l;
         }
 
-        int get(byte b) { // Change char to byte
+        int get(byte b) {
             return next.getOrDefault(b, -1);
         }
     }
@@ -52,7 +52,7 @@ class SuffixTree {
 
     static State ptr;
 
-    SuffixTree(byte[] byteArray) { // Change String to byte[]
+    SuffixTree(byte[] byteArray) { 
         this.s = byteArray;
 		this.s = Arrays.copyOf(byteArray, byteArray.length + 1);
 		this.s[this.s.length - 1] = TER;
@@ -62,14 +62,14 @@ class SuffixTree {
         buildTree(this.s, n);
     }
 
-    static State go(State st, int l, int r, byte[] byteArray) { // Change String to byte[]
+    static State go(State st, int l, int r, byte[] byteArray) { 
         while (l < r) {
             if (st.pos == node[st.v].len()) {
-                st = new State(node[st.v].get(byteArray[l]), 0); // Change char to byte
+                st = new State(node[st.v].get(byteArray[l]), 0); 
                 if (st.v == -1)
                     return st;
             } else {
-                if (s[node[st.v].l + st.pos] != byteArray[l]) { // Change char to byte
+                if (s[node[st.v].l + st.pos] != byteArray[l]) { 
                     return new State(-1, -1);
                 }
                 if (r - l < node[st.v].len() - st.pos) {
@@ -113,9 +113,9 @@ class SuffixTree {
         return node[v].link = split(go(new State(to, node[to].len()), node[v].l + (node[v].par == 0 ? 1 : 0), node[v].r, s));
     }
 
-    static void treeExtend(int pos, byte[] byteArray) { // Change String to byte[]
+    static void treeExtend(int pos, byte[] byteArray) { 
         for (;;) {
-            State nptr = go(ptr, pos, pos + 1, byteArray); // Change String to byte[]
+            State nptr = go(ptr, pos, pos + 1, byteArray); 
             if (nptr.v != -1) {
                 ptr = nptr;
                 return;
@@ -135,30 +135,30 @@ class SuffixTree {
         }
     }
 
-    static void buildTree(byte[] byteArray, int n) { // Change String to byte[]
+    static void buildTree(byte[] byteArray, int n) { 
         sz = 1;
         for (int i = 0; i < n; ++i) {
             treeExtend(i, byteArray);
         }
     }
 
-    public int[] match(byte[] patternArray) { // Change String to byte[]
+    public List<Integer> match(byte[] patternArray) { 
         int sptr = 0;
         int i = 0;
         List<Integer> matches = new ArrayList<>();
 
-        while (i < patternArray.length) { // Change String to byte[]
-            if (!node[sptr].next.containsKey(patternArray[i])) { // Change char to byte
-                return new int[0];
+        while (i < patternArray.length) { 
+            if (!node[sptr].next.containsKey(patternArray[i])) { 
+                return new ArrayList<>();
             }
 
-            sptr = node[sptr].next.get(patternArray[i]); // Change char to byte
+            sptr = node[sptr].next.get(patternArray[i]); 
 
-            int len = Math.min(node[sptr].len(), patternArray.length - i); // Change Math.min to Math.min
+            int len = Math.min(node[sptr].len(), patternArray.length - i); 
 
             for (int j = 0; j < len; j++) {
                 if (s[node[sptr].l + j] != patternArray[i + j]) {
-                    return new int[0];
+                    return new ArrayList<>();
                 }
             }
             i += len;
@@ -179,11 +179,7 @@ class SuffixTree {
             }
         }
 
-        int[] result = new int[matches.size()];
-        for (int k = 0; k < matches.size(); k++) {
-            result[k] = matches.get(k);
-        }
-        return result;
+        return matches;
     }
 
     static void printTree() {

@@ -145,14 +145,14 @@ class SuffixTree {
             treeExtend(i, str);
     }
 
-    public int[] match(String pattern) {
+    public List<Integer> match(String pattern) {
         int sptr = 0;
         int i = 0;
         List<Integer> matches = new ArrayList<>();
 
         while (i < pattern.length()) {
             if (!node[sptr].next.containsKey(pattern.charAt(i))) {
-                return new int[0];
+				return new ArrayList<>();
             }
 
             sptr = node[sptr].next.get(pattern.charAt(i)); // Goto next node
@@ -160,9 +160,8 @@ class SuffixTree {
             int len = node[sptr].len()>(pattern.length() - i)?(pattern.length() - i):node[sptr].len();
 
             for (int j = 0; j < len; j++) {
-                // sptr.pos = j;
                 if (s.charAt(j + node[sptr].l) != pattern.charAt(i)){
-                    return new int[0];
+					return new ArrayList<>();
                 }
                 i++;
             }
@@ -183,13 +182,8 @@ class SuffixTree {
                 }
             }
         }
-
-        int[] result = new int[matches.size()];
-        for (int k = 0; k < matches.size(); k++) {
-            result[k] = matches.get(k);
-        }
-        return result;
-
+		
+        return matches;
     }
 
     static void printTree() { // For debugging purpose
