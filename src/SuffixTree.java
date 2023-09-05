@@ -187,8 +187,11 @@ class SuffixTree {
     }
 
     static void printTree() { // For debugging purpose
+        System.out.println("   node#   l   r   par   len");
         for (int i = 0; i < sz; i++) {
-            System.out.println("Node " + i + " " + node[i].l + " " + node[i].r + " " + node[i].par + " " + node[i].link + " " + node[i].p_len);
+            String output = String.format("Node %3d %3d %3d %4d %4d",
+                i, node[i].l, node[i].r, node[i].par, node[i].p_len);
+            System.out.println(output);
         }
     }
 
