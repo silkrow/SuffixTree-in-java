@@ -28,6 +28,6 @@ public class Main {
         }
 
         // Print the constructed tree
-        // suffixTree.printTree();
+        suffixTree.printTree();
     }
 }
